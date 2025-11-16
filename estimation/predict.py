@@ -38,7 +38,9 @@ def predict(args):
             ('regnety_040.ra3_in1k', 1088),
         ]
     ]
-    model = EnsembleModel(cnn_models)
+    model = EnsembleModel(cnn_models).cuda()
+    model.load_state_dict(torch.load(args.model, weights_only=True))
+
     X_val = Utility.load_np(data_dir=".", file_name=args.x_val)
     y_val = Utility.load_np(data_dir=".", file_name=args.y_val)
     val_dataset = CosmologyDataset(
@@ -77,7 +79,7 @@ def predict(args):
     # There are Ncosmo distinct cosmologies in the labels.
     # Here we create a list that groups the indices of the validation instances with the same cosmological parameters
     cosmology = Utility.load_np(data_dir=".", file_name=args.full_label_array)
-    cosmology = cosmology.label[:, 0, :2]  # shape = (Ncosmo, 2)
+    cosmology = cosmology[:, 0, :2]  # shape = (Ncosmo, 2)
 
     Ncosmo = 101
     row_to_i = {tuple(cosmology[i]): i for i in range(Ncosmo)}
@@ -119,8 +121,8 @@ def predict(args):
     mean_d_vector_interp = RBFInterpolator(cosmology, mean_d_vector, kernel='thin_plate_spline', neighbors=10)
     cov_d_vector_interp = NearestNDInterpolator(cosmology, cov_d_vector)
 
-    sio.dump(mean_d_vector_interp, "mean_d_vector_interp.skops")
-    sio.dump(cov_d_vector_interp, "cov_d_vector_interp.skops")
+    # sio.dump(mean_d_vector_interp, "mean_d_vector_interp.skops")
+    # sio.dump(cov_d_vector_interp, "cov_d_vector_interp.skops")
 
     om = cosmology[:, 0]
     om_gamma_shape, om_gamma_loc, om_gamma_scale = gamma.fit(om)
@@ -252,10 +254,13 @@ def point_prediction(model, loader, label_scaler, pca):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Denoise convergence maps.")
     parser.add_argument("--model", type=str,
-                        help="Path to the denoising model")
+                        help="Path to the estimation model")
     parser.add_argument("--x_val", type=str, default="X_val.npy", help="Path to X_val numpy file (default: X_val.npy)")
     parser.add_argument("--y_val", type=str, default="y_val.npy", help="Path to y_val numpy file (default: y_val.npy)")
-    parser.add_argument("--x_test", type=str, default="X_test.npy", help="Path to X_val numpy file (default: X_test.npy)")
+    parser.add_argument("--full_label_array", type=str, default="label.npy",
+                        help="Path to full label numpy file (default: label.npy)")
+    parser.add_argument("--x_test", type=str, default="X_test.npy",
+                        help="Path to X_val numpy file (default: X_test.npy)")
 
     args = parser.parse_args()
     predict(args)

@@ -13,12 +13,11 @@ uv sync
 
 The typical workflow consists of the following steps:
 
-### 1. Generate Train/Validation Split
+### 1. Prepare Data
 
-Split your data into training and validation sets:
-
+Run the data preparation script to split the dataset into training and validation sets, and prepare the test data.
 ```bash
-uv run -m train_val_split --images WIDE12H_bin2_2arcmin_kappa.npy --labels labels.npy
+uv run -m preprocess_data --input_dir dataset_dir --output_dir preprocess_data_dir
 ```
 
 **Arguments:**
@@ -56,20 +55,28 @@ uv run -m denoising.train \
 
 ### 3. Generate Denoised Data
 
-Apply the trained denoiser to generate denoised versions of the train/val data. This will apply noise to the data and then denoise it using the trained model.
+Apply the trained denoiser to generate denoised versions of the train/val data. For training data, noise is added before denoising to simulate the noisy conditions.
 
 ```bash
 # Denoise training data
 uv run -m denoising.denoise \
   --model denoiser_checkpoints/best_model.ckpt \
-  --noisy X_train.npy \
-  --denoised X_train_denoised.npy
+  --input X_train.npy \
+  --add_noise \
+  --output X_train_denoised.npy
 
 # Denoise validation data
 uv run -m denoising.denoise \
   --model denoiser_checkpoints/best_model.ckpt \
-  --noisy X_val.npy \
-  --denoised X_val_denoised.npy
+  --input X_val.npy \
+  --add_noise \
+  --output X_val_denoised.npy
+  
+# Denoise test data
+uv run -m denoising.denoise \
+  --model denoiser_checkpoints/best_model.ckpt \
+  --input X_val.npy \
+  --output X_val_denoised.npy
 ```
 
 **Arguments:**

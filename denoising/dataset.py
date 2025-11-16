@@ -47,33 +47,3 @@ class DenoisingDataset(Dataset):
             return noisy, clean, label
 
         return noisy, clean
-
-class InferenceDataset(Dataset):
-
-    def __init__(self, X):
-        self.X = X
-
-    def __len__(self):
-        return len(self.kappa_clean)
-
-    def __getitem__(self, idx):
-        # Get clean map
-        clean = self.kappa_clean[idx]
-
-        # Add noise on-the-fly
-        noisy = Utility.add_noise(clean, self.mask, self.ng, self.pixel_size)
-        if self.transform is not None:
-            noisy = self.transform(noisy)
-        # noisy = _apply_coarse_dropout(noisy)
-
-        # Convert to tensors and add channel dimension: (H, W) -> (1, H, W)
-        mean = -0.00014706686488352716
-        std = 0.008249041624367237
-        clean = (torch.FloatTensor(clean).unsqueeze(0) - mean) / std
-        noisy = (torch.FloatTensor(noisy).unsqueeze(0) - mean) / std
-
-        if self.labels is not None:
-            label = torch.FloatTensor(self.labels[idx])
-            return noisy, clean, label
-
-        return noisy, clean

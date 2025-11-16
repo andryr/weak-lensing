@@ -72,7 +72,7 @@ def train_single_model(train_loader, val_loader, cnn_model_name, cnn_feat_dim, l
     )
 
     trainer = pl.Trainer(
-        max_epochs=15,
+        max_epochs=epochs,
         accelerator='gpu',
         precision="16-mixed",
         devices=1,
