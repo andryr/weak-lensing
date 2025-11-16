@@ -88,6 +88,17 @@ def train_single_model(train_loader, val_loader, cnn_model_name, cnn_feat_dim, l
 
     print(f"\\nTraining finished in {(end_time - start_time) / 60:.2f} minutes.")
 
+    # Load the best model
+    best_model_path = checkpoint_callback.best_model_path
+    if best_model_path:
+        model = ParameterEstimator.load_from_checkpoint(
+            best_model_path,
+            cnn=cnn,
+            feature_size=cnn_feat_dim,
+            num_targets=2
+        )
+        print(f"Best model loaded from {best_model_path}")
+
     plt.plot(loss_history_callback.train_losses[1:], label="Train Loss")
     plt.plot(loss_history_callback.val_losses[2:], label="Val Loss")
     plt.xlabel("Epoch")
