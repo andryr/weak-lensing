@@ -254,8 +254,8 @@ if __name__ == "__main__":
     parser.add_argument("--model", type=str,
                         help="Path to the denoising model")
     parser.add_argument("--x_val", type=str, default="X_val.npy", help="Path to X_val numpy file (default: X_val.npy)")
-    parser.add_argument("--x_test", type=str, default="X_test.npy", help="Path to X_val numpy file (default: X_test.npy)")
     parser.add_argument("--y_val", type=str, default="y_val.npy", help="Path to y_val numpy file (default: y_val.npy)")
+    parser.add_argument("--x_test", type=str, default="X_test.npy", help="Path to X_val numpy file (default: X_test.npy)")
 
     args = parser.parse_args()
     predict(args)
