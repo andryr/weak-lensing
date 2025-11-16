@@ -1,0 +1,13 @@
+[project]
+name = "weak-lensing-submission"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "albumentations>=2.0.8",
+    "matplotlib>=3.10.7",
+    "pytorch-lightning>=2.5.6",
+    "scikit-learn>=1.7.2",
+    "skops>=0.13.0",
+    "timm>=1.0.22",
+]
