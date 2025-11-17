@@ -47,8 +47,8 @@ def denoise(args):
             mean = -0.00014706686488352716
             std = 0.008249041624367237
             x_denoised = x_denoised * std + mean
-        denoised.append(x_denoised)
-    denoised = np.vstack(denoised)
+        denoised.append(x_denoised.astype(np.float16))
+    denoised = np.vstack(denoised, dtype=np.float16)
     Utility.save_np(data_dir=".", file_name=args.output, data=denoised)
 
 
