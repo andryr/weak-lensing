@@ -26,9 +26,9 @@ if __name__ == "__main__":
     train_NP_idx, val_NP_idx = train_test_split(NP_idx, test_size=split_fraction,
                                                 random_state=seed)
 
-    X_train = X[:, train_NP_idx]
+    X_train = X[:, train_NP_idx].reshape(-1, 1424, 176)
     y_train = y[:, train_NP_idx, :2].reshape(-1, 2)
-    X_val = X[:, val_NP_idx]
+    X_val = X[:, val_NP_idx].reshape(-1, 1424, 176)
     y_val = y[:, val_NP_idx, :2].reshape(-1, 2)
 
     os.makedirs(args.output_dir, exist_ok=True)
